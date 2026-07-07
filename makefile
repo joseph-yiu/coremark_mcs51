@@ -47,6 +47,9 @@ all: coremark/core_main.c  $(DEPLIST) $(REL_FILES)
 	       -I coremark -I . \
 	       $(DEF_MACROS) $(SDCCCFLAGS)
 
-
+clean:
+	rm *.rel *.asm *lst *.sym
+	
+	
 
 	       
