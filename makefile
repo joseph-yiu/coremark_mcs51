@@ -1,5 +1,7 @@
 SDCCCFLAGS = -mmcs51
 SDCCCFLAGS += --iram-size 256
+SDCCCFLAGS += --xram-size 65536
+SDCCCFLAGS += --xram-loc  0
 SDCCCFLAGS += --stack-auto
 #SDCCCFLAGS += --int-long-reent
 #SDCCCFLAGS += --model-small
@@ -7,7 +9,17 @@ SDCCCFLAGS += --stack-auto
 SDCCCFLAGS += --model-large
 #SDCCCFLAGS += --model-huge
 SDCCCFLAGS += --std-c11
+#SDCCCFLAGS += --opt-code-size
+SDCCCFLAGS += --opt-code-speed
+#SDCCCFLAGS += --max-allocs-per-node
+#SDCCCFLAGS += --nooverlay
+
 #SDCCCFLAGS += --xstack
+#SDCCCFLAGS += --xstack-loc 32768
+#SDCCCFLAGS += --stack-loc=21
+#SDCCCFLAGS += --stack-size=128
+#SDCCCFLAGS += --idata-loc 8
+#SDCCCFLAGS += --stack-loc 0x80
 
 DEF_MACROS = -DITERATIONS=1000 -DSTANDALONE -DPERFORMANCE_RUN=1 
 
@@ -53,8 +65,11 @@ all: coremark/core_main.c  $(DEPLIST) $(REL_FILES)
 	       -I coremark -I . -o coremark \
 	       $(SDCCCFLAGS) $(DEF_MACROS)
 
+# Simulate using uCSim
+# -a 256 : internal RAM size
+# -G: go
 sim:
-	s51 -S out=/dev/stdout coremark.ihx
+	s51 -a 256 -G -S out=/dev/stdout coremark.ihx
 
 clean:
 	rm coremark.* 
