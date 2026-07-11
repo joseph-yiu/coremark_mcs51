@@ -1,8 +1,10 @@
 SDCCCFLAGS = -mmcs51
+SDCCCFLAGS += --iram-size 256
+SDCCCFLAGS += --stack-auto
 #SDCCCFLAGS += --int-long-reent
-SDCCCFLAGS += --model-small
+#SDCCCFLAGS += --model-small
 #SDCCCFLAGS += --model-medium
-#SDCCCFLAGS += --model-large
+SDCCCFLAGS += --model-large
 #SDCCCFLAGS += --model-huge
 SDCCCFLAGS += --std-c11
 #SDCCCFLAGS += --xstack
@@ -12,7 +14,7 @@ DEF_MACROS = -DITERATIONS=1000 -DSTANDALONE -DPERFORMANCE_RUN=1
 DEPLIST = makefile coremark/coremark.h
 
 REL_FILES = 8052_device.rel core_portme.rel \
-  core_portme.rel core_util.rel core_state.rel core_matrix.rel core_list_join.rel
+  core_util.rel core_state.rel core_matrix.rel core_list_join.rel
 
 
 
@@ -48,11 +50,16 @@ core_portme.rel: $(DEPLIST) core_portme.c core_portme.h
 
 all: coremark/core_main.c  $(DEPLIST) $(REL_FILES)
 	sdcc   coremark/core_main.c  $(REL_FILES) \
-	       -I coremark -I . \
+	       -I coremark -I . -o coremark \
 	       $(SDCCCFLAGS) $(DEF_MACROS)
 
+sim:
+	s51 -S out=/dev/stdout coremark.ihx
+
 clean:
-	rm *.rel *.asm *lst *.sym
+	rm coremark.* 
+	rm *.rel *.asm *.lst *.sym *.rst 
+	
 	
 	
 
