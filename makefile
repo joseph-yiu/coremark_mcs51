@@ -1,5 +1,5 @@
-#SDCCCFLAGS = --model-small
-SDCCCFLAGS = --model-medium
+SDCCCFLAGS = --model-small
+#SDCCCFLAGS = --model-medium
 #SDCCCFLAGS = --model-large
 #SDCCCFLAGS = --model-huge
 SDCCCFLAGS += --std-c11
