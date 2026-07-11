@@ -67,6 +67,10 @@ typedef ee_u32 secs_ret;
 #define MAIN_RETURN_TYPE int
 #endif
 
+#ifndef __COREMARK_REENTRANT
+#define __COREMARK_REENTRANT
+#endif
+
 void       start_time(void);
 void       stop_time(void);
 CORE_TICKS get_time(void);
