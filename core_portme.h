@@ -65,12 +65,14 @@ Original Author: Shay Gal-on
 #ifdef __GNUC__
 #define COMPILER_VERSION "GCC"__VERSION__
 #else
-#define COMPILER_VERSION "Please put compiler version here (e.g. gcc 4.1)"
+/*#define COMPILER_VERSION "Please put compiler version here (e.g. gcc 4.1)"*/
+#define COMPILER_VERSION __STDC_VERSION__ 
 #endif
 #endif
 #ifndef COMPILER_FLAGS
 #define COMPILER_FLAGS \
-    FLAGS_STR /* "Please put compiler flags here (e.g. -o3)" */
+"REVISIT -to be added"
+/*    FLAGS_STR *//* "Please put compiler flags here (e.g. -o3)" */
 #endif
 #ifndef MEM_LOCATION
 #define MEM_LOCATION "STACK"
