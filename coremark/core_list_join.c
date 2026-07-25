@@ -64,7 +64,7 @@ list_head *core_list_insert_new(list_head * insert_point,
 typedef ee_s32 (*list_cmp)(list_data *a, list_data *b, core_results *res) __COREMARK_REENTRANT;
 list_head *core_list_mergesort(list_head *   list,
                                list_cmp      cmp,
-                               core_results *res);
+                               core_results *res) __COREMARK_REENTRANT;
 
 ee_s16
 calc_func(ee_s16 *pdata, core_results *res)
@@ -131,7 +131,7 @@ cmp_complex(list_data *a, list_data *b, core_results *res) __COREMARK_REENTRANT
         Can be used by mergesort.
 */
 ee_s32
-cmp_idx(list_data *a, list_data *b, core_results *res)
+cmp_idx(list_data *a, list_data *b, core_results *res) __COREMARK_REENTRANT
 {
     if (res == NULL)
     {
@@ -497,7 +497,7 @@ core_list_reverse(list_head *list)
 
  */
 list_head *
-core_list_mergesort(list_head *list, list_cmp cmp, core_results *res)
+core_list_mergesort(list_head *list, list_cmp cmp, core_results *res) __COREMARK_REENTRANT
 {
     list_head *p, *q, *e, *tail;
     ee_s32     insize, nmerges, psize, qsize, i;

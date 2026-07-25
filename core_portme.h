@@ -62,13 +62,21 @@ Original Author: Shay Gal-on
         Initialize these strings per platform
 */
 #ifndef COMPILER_VERSION
-#ifdef __GNUC__
-#define COMPILER_VERSION "GCC"__VERSION__
-#else
-/*#define COMPILER_VERSION "Please put compiler version here (e.g. gcc 4.1)"*/
-#define COMPILER_VERSION __STDC_VERSION__ 
+ #ifdef __GNUC__
+  #define COMPILER_VERSION "GCC"__VERSION__
+ #else
+  #ifdef __SDCC
+   #define COMPILER_VERSION __STDC_VERSION__ 
+  #else
+   #ifdef __C51__
+    #define COMPILER_VERSION "C51v9.60.70"
+   #else
+    /*#define COMPILER_VERSION "Please put compiler version here (e.g. gcc 4.1)"*/    
+   #endif
+  #endif
+ #endif
 #endif
-#endif
+
 #ifndef COMPILER_FLAGS
 #define COMPILER_FLAGS \
 "REVISIT -to be added"
@@ -82,7 +90,12 @@ Original Author: Shay Gal-on
 #define __COREMARK_REENTRANT __reentrant
 #define MEM_METHOD MEM_STATIC
 #else
+#ifdef __C51__
+#define __COREMARK_REENTRANT reentrant
+#define MEM_METHOD MEM_STATIC
+#else
 #define __COREMARK_REENTRANT
+#endif
 #endif
 
 
@@ -112,7 +125,18 @@ typedef size_t         ee_size_t;
         This macro is used to align an offset to point to a 32b value. It is
    used in the Matrix algorithm to initialize the input memory blocks.
 */
-#define align_mem(x) (void *)(4 + (((ee_ptr_int)(x)-1) & ~3))
+#ifdef __SDCC
+ #define align_mem(x) \
+    ((void __xdata *)((((unsigned int)(void __xdata *)(x)) + 3u) & 0xFFFCu))
+#else
+ #ifdef __C51__
+  #define align_mem(x) \
+    ((void xdata *)((((unsigned int)(void xdata *)(x)) + 3u) & 0xFFFCu))
+ #else
+  #define align_mem(x) (void *)(4 + (((ee_ptr_int)(x)-1) & ~3))
+ #endif
+#endif
+
 
 /* Configuration : CORE_TICKS
         Define type of return from the timing functions.
