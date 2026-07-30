@@ -87,15 +87,17 @@ Original Author: Shay Gal-on
 #endif
 
 #ifdef __SDCC
+/* Experimental settings for SDCC Compiler */
 #define __COREMARK_REENTRANT __reentrant
 #define MEM_METHOD MEM_STATIC
-#else
+#define MEM_STATIC_ATTR __xdata
+#endif
+
 #ifdef __C51__
+/* Experimental settings for Keil C51 Compiler */
 #define __COREMARK_REENTRANT reentrant
 #define MEM_METHOD MEM_STATIC
-#else
-#define __COREMARK_REENTRANT
-#endif
+#define MEM_STATIC_ATTR xdata
 #endif
 
 

@@ -48,6 +48,10 @@ input for the operation.
 
 */
 
+#ifndef __COREMARK_REENTRANT
+#define __COREMARK_REENTRANT
+#endif
+
 /* local functions */
 
 list_head *core_list_find(list_head *list, list_data *info);
