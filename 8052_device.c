@@ -9,6 +9,7 @@ unsigned long get_100Hz_value(void); /* Read a timer value with 0.01 sec resolut
 
 void Timer2_ISR(void) __interrupt (5) {
     count++; // Increment count on each Timer 2 interrupt
+    TF2 = 0;
 }
 
 
