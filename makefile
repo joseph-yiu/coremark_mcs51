@@ -1,38 +1,45 @@
+# Experimental makefile to compile CoreMark with SDCC
+
+# MCS51 architecture (Note: using 8052)
 SDCCCFLAGS = -mmcs51
+
+SDCCCFLAGS += --std-c11
+SDCCCFLAGS += --opt-code-size
+#SDCCCFLAGS += --opt-code-speed
+
 SDCCCFLAGS += --iram-size 256
-#SDCCCFLAGS += --stack-auto
+SDCCCFLAGS += --stack-auto
+
 #SDCCCFLAGS += --int-long-reent
 #SDCCCFLAGS += --model-small
 #SDCCCFLAGS += --model-medium
 SDCCCFLAGS += --model-large
 #SDCCCFLAGS += --model-huge
-SDCCCFLAGS += --std-c11
-SDCCCFLAGS += --opt-code-size
-#SDCCCFLAGS += --opt-code-speed
 #SDCCCFLAGS += --max-allocs-per-node
-#DCCCFLAGS += --nooverlay
+#SDCCCFLAGS += --nooverlay
 
 SDCCCFLAGS += --xram-loc  0
 SDCCCFLAGS += --xram-size 65536
-SDCCCFLAGS += --xstack
-SDCCCFLAGS += --xstack-loc 0xD000
+#SDCCCFLAGS += --xstack
+#SDCCCFLAGS += --xstack-loc 0xD000
 SDCCCFLAGS += --data-loc   0x0000
 
 #SDCCCFLAGS += --stack-loc=21
 #SDCCCFLAGS += --stack-size=128
-SDCCCFLAGS += --idata-loc 8
+#SDCCCFLAGS += --idata-loc 8
 #SDCCCFLAGS += --stack-loc 0x80
-SDCC_LIB=/home/joseph/projects/tools/sdcc-4.6.0/share/sdcc/lib/large/
-#SDCC_LIB=/home/joseph/projects/tools/sdcc-4.6.0/share/sdcc/lib/large-stack-auto/
-#SDCC_LIB=/home/joseph/projects/tools/sdcc-4.6.0/share/sdcc/lib/huge/
+#SDCC_LIB=/home/jyiu/tools/sdcc-4.6.0/share/sdcc/lib/large/
+SDCC_LIB=/home/jyiu/tools/sdcc-4.6.0/share/sdcc/lib/large-stack-auto/
+#SDCC_LIB=/home/jyiu/tools/sdcc-4.6.0/share/sdcc/lib/huge/
 
 DEF_MACROS = -DITERATIONS=1000 -DSTANDALONE -DPERFORMANCE_RUN=1 
 
-DEPLIST = makefile coremark/coremark.h
+MAIN_INCLUDES = --include 8052_device.h
+
+DEPLIST = makefile coremark/coremark.h 8052_device.h
 
 REL_FILES = 8052_device.rel core_portme.rel \
   core_util.rel core_state.rel core_matrix.rel core_list_join.rel
-
 
 
 core_list_join.rel: $(DEPLIST) coremark/core_list_join.c
@@ -68,7 +75,7 @@ core_portme.rel: $(DEPLIST) core_portme.c core_portme.h
 all: coremark/core_main.c  $(DEPLIST) $(REL_FILES)
 	sdcc   coremark/core_main.c  $(REL_FILES) \
 	       -I coremark -I . -o coremark \
-	       $(SDCCCFLAGS) $(DEF_MACROS) -L $(SDCC_LIB)
+	       $(SDCCCFLAGS) $(MAIN_INCLUDES) $(DEF_MACROS) -L $(SDCC_LIB)
 
 # Simulate using uCSim
 # -a 256 : internal RAM size
