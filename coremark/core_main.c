@@ -206,7 +206,11 @@ for (i = 0; i < MULTITHREAD; i++)
             num_algorithms++;
     }
     for (i = 0; i < MULTITHREAD; i++)
+#ifdef __C51__
+        results[i].size = results[i].datasize / num_algorithms;
+#else
         results[i].size = results[i].size / num_algorithms;
+#endif
     /* Assign pointers */
     for (i = 0; i < NUM_ALGORITHMS; i++)
     {
@@ -225,11 +229,19 @@ for (i = 0; i < MULTITHREAD; i++)
         if (results[i].execs & ID_LIST)
         {
             results[i].list = core_list_init(
+#ifdef __C51__
+                results[0].datasize, results[i].memblock[1], results[i].seed1);
+#else
                 results[0].size, results[i].memblock[1], results[i].seed1);
+#endif
         }
         if (results[i].execs & ID_MATRIX)
         {
+#ifdef __C51__
+            core_init_matrix(results[0].datasize,
+#else
             core_init_matrix(results[0].size,
+#endif
                              results[i].memblock[2],
                              (ee_s32)results[i].seed1
                                  | (((ee_s32)results[i].seed2) << 16),
@@ -238,7 +250,11 @@ for (i = 0; i < MULTITHREAD; i++)
         if (results[i].execs & ID_STATE)
         {
             core_init_state(
+#ifdef __C51__
+                results[0].datasize, results[i].seed1, results[i].memblock[3]);
+#else
                 results[0].size, results[i].seed1, results[i].memblock[3]);
+#endif
         }
     }
 
@@ -291,8 +307,11 @@ for (i = 0; i < MULTITHREAD; i++)
     seedcrc = crc16(results[0].seed1, seedcrc);
     seedcrc = crc16(results[0].seed2, seedcrc);
     seedcrc = crc16(results[0].seed3, seedcrc);
+#ifdef __C51__
+    seedcrc = crc16(results[0].datasize, seedcrc);
+#else
     seedcrc = crc16(results[0].size, seedcrc);
-
+#endif
     switch (seedcrc)
     {                /* test known output for common seeds */
         case 0x8a02: /* seed1=0, seed2=0, seed3=0x66, size 2000 per algorithm */
@@ -359,7 +378,11 @@ for (i = 0; i < MULTITHREAD; i++)
     }
     total_errors += check_data_types();
     /* and report results */
+#ifdef __C51__
+    ee_printf("CoreMark Size    : %lu\n", (long unsigned)results[0].datasize);
+#else
     ee_printf("CoreMark Size    : %lu\n", (long unsigned)results[0].size);
+#endif
     ee_printf("Total ticks      : %lu\n", (long unsigned)total_time);
 #if HAS_FLOAT
     ee_printf("Total time (secs): %f\n", time_in_secs(total_time));
@@ -368,11 +391,20 @@ for (i = 0; i < MULTITHREAD; i++)
                   default_num_contexts * results[0].iterations
                       / time_in_secs(total_time));
 #else
+#ifdef __C51__
+    /* Keil C51 does not support PRIu32 */
+    ee_printf("Total time (secs): %d\n", (int)time_in_secs(total_time));
+    if (time_in_secs(total_time) > 0)
+        ee_printf("Iterations/Sec   : %d\n", (int) (
+                  default_num_contexts * results[0].iterations
+                      / time_in_secs(total_time)));
+#else
     ee_printf("Total time (secs): %"PRIu32"\n", time_in_secs(total_time));
     if (time_in_secs(total_time) > 0)
         ee_printf("Iterations/Sec   : %"PRIu32"\n",
                   default_num_contexts * results[0].iterations
                       / time_in_secs(total_time));
+#endif
 #endif
     if (time_in_secs(total_time) < 10)
     {

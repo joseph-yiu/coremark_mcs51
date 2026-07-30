@@ -41,8 +41,10 @@ Original Author: Shay Gal-on
 #include <stdio.h>
 #endif
 #if HAS_PRINTF
+#ifndef __C51__
 /* Adding inttypes.h (C99) to support PRIu32 in printf */
 #include <inttypes.h>
+#endif
 #define ee_printf printf
 #endif
 
@@ -77,7 +79,11 @@ CORE_TICKS get_time(void);
 secs_ret   time_in_secs(CORE_TICKS ticks);
 
 /* Misc useful functions */
+#ifdef __C51__
+ee_u16 crcu8(ee_u8 newval, ee_u16 crc);
+#else
 ee_u16 crcu8(ee_u8 data, ee_u16 crc);
+#endif
 ee_u16 crc16(ee_s16 newval, ee_u16 crc);
 ee_u16 crcu16(ee_u16 newval, ee_u16 crc);
 ee_u16 crcu32(ee_u32 newval, ee_u16 crc);
@@ -147,7 +153,11 @@ typedef struct RESULTS_S
     ee_s16              seed2;       /* Initializing seed */
     ee_s16              seed3;       /* Initializing seed */
     void *              memblock[4]; /* Pointer to safe memory location */
+#ifdef __C51__
+    ee_u32              datasize;    /* Size of the data */
+#else
     ee_u32              size;        /* Size of the data */
+#endif
     ee_u32              iterations;  /* Number of iterations to execute */
     ee_u32              execs;       /* Bitmask of operations to execute */
     struct list_head_s *list;

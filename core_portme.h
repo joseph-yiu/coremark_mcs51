@@ -111,6 +111,19 @@ Original Author: Shay Gal-on
 */
 
 #include <stddef.h> /* Note: Required for size_t */
+
+#ifdef __C51__
+/* Keil C51 does not support stdint.h */
+typedef signed short      ee_s16;
+typedef unsigned short    ee_u16;
+typedef signed long int   ee_s32;
+typedef float             ee_f32;
+typedef unsigned char     ee_u8;
+typedef unsigned long int ee_u32;
+typedef ee_u32            ee_ptr_int;
+typedef size_t            ee_size_t;
+
+#else
 #include <stdint.h>
 
 typedef signed short   ee_s16;
@@ -121,6 +134,7 @@ typedef unsigned char  ee_u8;
 typedef uint32_t       ee_u32;
 typedef ee_u32         ee_ptr_int;
 typedef size_t         ee_size_t;
+#endif
 
 #define NULL ((void *)0)
 /* align_mem :

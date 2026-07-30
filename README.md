@@ -4,10 +4,34 @@
 
 This is an experimental repo for testing CoreMark with the MCS51 architecture (e.g. 8051/8052).
 The work is for addressing https://github.com/eembc/coremark/issues/71
-The code changes is done in https://github.com/joseph-yiu/coremark/tree/fix/issue71_mcs51
 This repo is to store my test setup.
 
-The coremark directory just is a duplication of the codes in 
-https://github.com/joseph-yiu/coremark/tree/fix/issue71_mcs51
+Current status:
+Project builds and works in Keil C51. Tested in C51 simulator only.
+(I do not have the hardware to test this.)
+
+When using Keil C51, MEM_METHOD must be set to MEM_STATIC.
+I haven't implement and test MEM_STACK configuration.
+
+There are some code changes compares to original CoreMark C files
+because "size", "data" and "pdata" are reserved key words in Keil C51.
+Also, some functions that are called recusively must be declared with 
+reentrant attribute (See __COREMARK_REENTRANT macro).
+
+Additionally, Keil C51 has the following limitations: stdint.h and
+PRIu32 are not supported.
+
+---
+
+I have also attempted to setup a makefile for SDCC. This (makefile.sdcc)
+can get the project to compile, but unfortunately the program is not 
+functional due to stack size restriction.
+
+In theory, putting stack in the external SRAM (using --xstack) should 
+be able to overcome the stack limitation. However, when using --xstack
+the C library must also be recompiled because SDCC does not include
+a variant of C runtime with xstack enabled by default.
+(Available libraries are in {SDCC_PATH}/sdcc-4.6.0/share/sdcc/lib/ ) 
+Since there is no out-of-box solution for SDCC, I put this effort on hold.
 
 

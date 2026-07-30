@@ -161,6 +161,33 @@ get_seed_32(int i)
         Service functions to calculate 16b CRC code.
 
 */
+#ifdef __C51__
+ee_u16
+crcu8(ee_u8 newval, ee_u16 crc)
+{
+    ee_u8 i = 0, x16 = 0, carry = 0;
+
+    for (i = 0; i < 8; i++)
+    {
+        x16 = (ee_u8)((newval & 1) ^ ((ee_u8)crc & 1));
+        newval >>= 1;
+
+        if (x16 == 1)
+        {
+            crc ^= 0x4002;
+            carry = 1;
+        }
+        else
+            carry = 0;
+        crc >>= 1;
+        if (carry)
+            crc |= 0x8000;
+        else
+            crc &= 0x7fff;
+    }
+    return crc;
+}
+#else
 ee_u16
 crcu8(ee_u8 data, ee_u16 crc)
 {
@@ -186,6 +213,7 @@ crcu8(ee_u8 data, ee_u16 crc)
     }
     return crc;
 }
+#endif
 ee_u16
 crcu16(ee_u16 newval, ee_u16 crc)
 {

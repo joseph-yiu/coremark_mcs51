@@ -70,6 +70,59 @@ list_head *core_list_mergesort(list_head *   list,
                                list_cmp      cmp,
                                core_results *res) __COREMARK_REENTRANT;
 
+#ifdef __C51__
+/* For Keil C51
+   - pdata renamed to ptr_data
+   - data  renamed to curr_data
+   - res->size renamed to res->datasize
+*/
+ee_s16
+calc_func(ee_s16 *ptr_data, core_results *res)
+{
+    ee_s16 curr_data = *ptr_data;
+    ee_s16 retval;
+    ee_u8  optype
+        = (curr_data >> 7)
+          & 1;  /* bit 7 indicates if the function result has been cached */
+    if (optype) /* if cached, use cache */
+        return (curr_data & 0x007f);
+    else
+    {                             /* otherwise calculate and cache the result */
+        ee_s16 flag = curr_data & 0x7; /* bits 0-2 is type of function to perform */
+        ee_s16 dtype
+            = ((curr_data >> 3)
+               & 0xf);       /* bits 3-6 is specific data for the operation */
+        dtype |= dtype << 4; /* replicate the lower 4 bits to get an 8b value */
+        switch (flag)
+        {
+            case 0:
+                if (dtype < 0x22) /* set min period for bit corruption */
+                    dtype = 0x22;
+                retval = core_bench_state(res->datasize,
+                                          res->memblock[3],
+                                          res->seed1,
+                                          res->seed2,
+                                          dtype,
+                                          res->crc);
+                if (res->crcstate == 0)
+                    res->crcstate = retval;
+                break;
+            case 1:
+                retval = core_bench_matrix(&(res->mat), dtype, res->crc);
+                if (res->crcmatrix == 0)
+                    res->crcmatrix = retval;
+                break;
+            default:
+                retval = curr_data;
+                break;
+        }
+        res->crc = crcu16(retval, res->crc);
+        retval &= 0x007f;
+        *ptr_data = (curr_data & 0xff00) | 0x0080 | retval; /* cache the result */
+        return retval;
+    }
+}
+#else
 ee_s16
 calc_func(ee_s16 *pdata, core_results *res)
 {
@@ -116,6 +169,7 @@ calc_func(ee_s16 *pdata, core_results *res)
         return retval;
     }
 }
+#endif
 /* Function: cmp_complex
         Compare the data item in a list cell.
 
