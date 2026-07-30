@@ -36,7 +36,7 @@ DEF_MACROS = -DITERATIONS=1000 -DSTANDALONE -DPERFORMANCE_RUN=1
 
 MAIN_INCLUDES = --include 8052_device.h
 
-DEPLIST = makefile coremark/coremark.h 8052_device.h
+DEPLIST = makefile.sdcc coremark/coremark.h 8052_device.h
 
 REL_FILES = 8052_device.rel core_portme.rel \
   core_util.rel core_state.rel core_matrix.rel core_list_join.rel
