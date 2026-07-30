@@ -1,4 +1,13 @@
+#ifdef __C51__
+#include <REG52.H>                /* special function register declarations   */
+                                  /* for the intended 8051 derivative         */
+#endif
+
+
+#ifdef __SDCC
 #include <8052.h>
+#endif
+
 #include <stdio.h>
 
 volatile int count = 0;
@@ -7,7 +16,13 @@ void timer_config(void); /* Initialize a timer peripheral */
 void stdio_init(void);   /* Initialize printf support (e.g. UART) */
 unsigned long get_100Hz_value(void); /* Read a timer value with 0.01 sec resolution */
 
+#ifdef __C51__
+/* Keil C51 syntax */
+void Timer2_ISR(void) interrupt 5 {
+#else
+/* SDCC syntax */
 void Timer2_ISR(void) __interrupt (5) {
+#endif
     count++; // Increment count on each Timer 2 interrupt
     TF2 = 0;
 }

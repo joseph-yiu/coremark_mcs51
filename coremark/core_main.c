@@ -164,7 +164,11 @@ main(int argc, char *argv[])
     }
 #if (MEM_METHOD == MEM_STATIC)
     results[0].memblock[0] = (void *)static_memblk;
+#ifdef __C51__
+    results[0].datasize    = TOTAL_DATA_SIZE;
+#else
     results[0].size        = TOTAL_DATA_SIZE;
+#endif
     results[0].err         = 0;
 #if (MULTITHREAD > 1)
 #error "Cannot use a static data area with multiple contexts!"
@@ -207,7 +211,7 @@ for (i = 0; i < MULTITHREAD; i++)
     }
     for (i = 0; i < MULTITHREAD; i++)
 #ifdef __C51__
-        results[i].size = results[i].datasize / num_algorithms;
+        results[i].datasize = results[i].datasize / num_algorithms;
 #else
         results[i].size = results[i].size / num_algorithms;
 #endif
@@ -219,7 +223,11 @@ for (i = 0; i < MULTITHREAD; i++)
         {
             for (ctx = 0; ctx < MULTITHREAD; ctx++)
                 results[ctx].memblock[i + 1]
+#ifdef __C51__
+                    = (char *)(results[ctx].memblock[0]) + results[0].datasize * j;
+#else
                     = (char *)(results[ctx].memblock[0]) + results[0].size * j;
+#endif
             j++;
         }
     }

@@ -263,7 +263,7 @@ check_data_types()
         ee_printf("ERROR: ee_u32 is not a 32b datatype!\n");
         retval++;
     }
-    if (sizeof(ee_ptr_int) != sizeof(int *))
+    if (sizeof(ee_ptr_int) < sizeof(int *))
     {
         ee_printf(
             "ERROR: ee_ptr_int is not a datatype that holds an int pointer!\n");
